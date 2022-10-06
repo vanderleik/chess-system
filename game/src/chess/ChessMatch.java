@@ -1,9 +1,8 @@
 package chess;
 
 import boardgame.Board;
-import boardgame.Position;
 import chess.pieces.King;
-import chess.pieces.Roock;
+import chess.pieces.Rook;
 
 /**
  * Essa classe é o coração do jogo de xadrez. É nessa classe que teremos as regras do jogo.
@@ -33,12 +32,22 @@ public class ChessMatch {
     }
 
     /**
+     * Método que recebe as coordenadas do xadrez
+     * @param column
+     * @param row
+     * @param piece
+     */
+    private void placeNewPiece(char column, int row, ChessPiece piece) {
+        board.placePiece(piece, new ChessPosition(column, row).toPosition());
+    }
+
+    /**
      * Método responsável por iniciar a partida de xadrez colocando as peças no tabuleiro
      */
     private void initialSetup(){
-        board.placePiece(new Roock(board, Color.WHITE), new Position(2,1));
-        board.placePiece(new King(board, Color.BLACK), new Position(0,1));
-        board.placePiece(new King(board, Color.WHITE), new Position(7,4));
+        placeNewPiece('b', 6, new Rook(board, Color.WHITE));
+        placeNewPiece('e', 8, new King(board, Color.BLACK));
+        placeNewPiece('e', 1, new King(board, Color.WHITE));
     }
 
 }
