@@ -50,6 +50,24 @@ public class Board {
     }
 
     /**
+     * Método que remove uma peça do tabuleiro
+     * @param position
+     * @return a peça retirada
+     */
+    public Piece removePiece(Position position){
+        if (!positionExists(position)) {
+            throw new BoardException("Position not on the board");
+        }
+        if (piece(position) == null) {
+            return null;
+        }
+        Piece aux = piece(position);
+        aux.position = null;
+        pieces[position.getRow()][position.getColumn()] = null; //não tem mais peça nessa posição
+        return aux;//retorna informando a peça que foi retirada
+    }
+
+    /**
      * Verifica se a posição existe no tabuleiro
      * @param position
      * @return
