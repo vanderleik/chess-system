@@ -33,6 +33,17 @@ public class ChessMatch {
         return mat;
     }
 
+    /**
+     * Método que retorna os movimentos possíveis de uma peça em uma determinada posição
+     * @param sourcePosition
+     * @return
+     */
+    public boolean[][] possibleMoves(ChessPosition sourcePosition) {
+        Position position = sourcePosition.toPosition();
+        validateSourcePosition(position);
+        return board.piece(position).possibleMovies();
+    }
+
     public ChessPiece performChessMove(ChessPosition sourcePosition, ChessPosition targetPosition){
         Position source = sourcePosition.toPosition();//Converte em posição da matriz
         Position target = targetPosition.toPosition();//Converte em posição da matriz
