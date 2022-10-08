@@ -1,5 +1,6 @@
 package application;
 
+import chess.ChessMatch;
 import chess.ChessPiece;
 import chess.ChessPosition;
 import chess.Color;
@@ -58,6 +59,21 @@ public class UI {
         }
     }
 
+    /**
+     * Imprime a partida (tabuleiro, turno, e aguardando o jogador)
+     * @param chessMatch
+     */
+    public static void printMatch(ChessMatch chessMatch){
+        printBoard(chessMatch.getPieces());
+        System.out.println();
+        System.out.println("Turn: " + chessMatch.getTurn());
+        System.out.println("Waiting payler: " + chessMatch.getCurrentPlayer());
+    }
+
+    /**
+     * Mostra o tabuleiro na tela
+     * @param pieces
+     */
     public static void printBoard(ChessPiece[][] pieces) {
         for (int i = 0; i < pieces.length; i++) {
             System.out.print((8 - i) + " ");
@@ -69,6 +85,11 @@ public class UI {
         System.out.println("  a b c d e f g h");
     }
 
+    /**
+     * Mostra o tabuleiro na tela com os movimentos possíveis
+     * @param pieces
+     * @param possibleMoves
+     */
     public static void printBoard(ChessPiece[][] pieces, boolean[][] possibleMoves) {
         for (int i = 0; i < pieces.length; i++) {
             System.out.print((8 - i) + " ");
