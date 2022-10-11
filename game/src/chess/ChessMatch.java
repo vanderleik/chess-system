@@ -8,6 +8,7 @@ import chess.pieces.Rook;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Essa classe é o coração do jogo de xadrez. É nessa classe que teremos as regras do jogo.
@@ -16,6 +17,7 @@ public class ChessMatch {
     private int turn;
     private Color currentPlayer;
     private Board board;
+    private boolean check;
 
     private List<Piece> piecesOnTheBoard = new ArrayList<>();
     private List<Piece> capturedPieces = new ArrayList<>();
@@ -37,6 +39,10 @@ public class ChessMatch {
 
     public Color getCurrentPlayer() {
         return currentPlayer;
+    }
+
+    public boolean getCheck() {
+        return check;
     }
 
     /**
@@ -67,10 +73,20 @@ public class ChessMatch {
         Position source = sourcePosition.toPosition();//Converte em posição da matriz
         Position target = targetPosition.toPosition();//Converte em posição da matriz
 
-        //Valido se na posição havia realmente uma peça
+        //Validação para verificar se na posição havia realmente uma peça
         validateSourcePosition(source);
         validateTargetPosition(source, target);
         Piece capturedPiece = makeMove(source, target);
+
+        //Validação para verificar se o movimento do jogador o colocou em cheque
+        if (testCheck(currentPlayer)) {
+            undoMove(source, target, capturedPiece);
+            throw new ChessException("You can't put yourself in check");
+        }
+
+        //Validação que verifica se o oponente ficou em cheque
+        check = (testCheck(opponent(currentPlayer))) ? true : false;//se true, a partida está em cheque
+
         nextTurn();
         return (ChessPiece) capturedPiece;
     }
@@ -106,6 +122,23 @@ public class ChessMatch {
     }
 
     /**
+     * Método que desfaz um movimento (desfaz a lógica do método makeMove
+     * @param source
+     * @param target
+     * @param capturedPiece
+     */
+    private void undoMove(Position source, Position target, Piece capturedPiece) {
+        Piece p = board.removePiece(target);//Remove a peça da posição do destino
+        board.placePiece(p, source);//Devolve a peça removida na linha anterior para a posição de origem
+
+        if (capturedPiece != null) {
+            board.placePiece(capturedPiece, target);
+            capturedPieces.remove(capturedPiece);
+            piecesOnTheBoard.add(capturedPiece);
+        }
+    }
+
+    /**
      * Valida a posição de origem da peça
      * @param position
      */
@@ -138,6 +171,42 @@ public class ChessMatch {
     private void nextTurn(){
         turn ++;
         currentPlayer = (currentPlayer == Color.WHITE) ? Color.BLACK : Color.WHITE;
+    }
+
+    /**
+     * Método que recebe uma cor e retorna o oponente dessa cor
+     * @param color
+     * @return
+     */
+    private Color opponent(Color color) {
+        return (color == Color.WHITE) ? Color.BLACK : Color.WHITE;
+    }
+
+    private ChessPiece king(Color color) {
+        List<Piece> list = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == color).collect(Collectors.toList());
+        for (Piece p : list) {
+            if (p instanceof King) {
+                return (ChessPiece)p;
+            }
+        }
+        throw new IllegalArgumentException("There is no " + color + "king on the board");
+    }
+
+    /**
+     * Método que verifica se um rei de uma determinada cor está em cheque
+     * @param color
+     * @return
+     */
+    private boolean testCheck(Color color) {
+        Position kingPosition = king(color).getChessPosition().toPosition();
+        List<Piece> opponentPieces = piecesOnTheBoard.stream().filter(x -> ((ChessPiece)x).getColor() == opponent(color)).collect(Collectors.toList());
+        for (Piece p : opponentPieces) {
+            boolean[][] mat = p.possibleMovies();
+            if (mat[kingPosition.getRow()][kingPosition.getColumn()]) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
