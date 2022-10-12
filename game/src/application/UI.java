@@ -76,7 +76,7 @@ public class UI {
             System.out.println("Waiting payler: " + chessMatch.getCurrentPlayer());
             //Verifica se a partida está em cheque
             if (chessMatch.getCheck()) {
-                System.out.println("CHECK");
+                System.out.println("CHECK!");
             }
         } else {
             System.out.println("CHECKMATE!");
