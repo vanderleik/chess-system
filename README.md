@@ -1,3 +1,3 @@
 # chess-system
 
-work in progress
+Programa de xadrez desenvolvido para fins de treinamento em programação orientada a objetos.
